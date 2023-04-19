@@ -9,7 +9,6 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.Animator;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Random;
 
 import static java.lang.Math.min;
@@ -63,7 +62,15 @@ class MainWindow implements GLEventListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            movingFigure.moveLeft();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            movingFigure.moveRight();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
+            movingFigure.rotate();
+        }
     }
 
     @Override
@@ -99,7 +106,7 @@ class MainWindow implements GLEventListener, KeyListener {
 
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
-        if (!movingFigure.updateState()) {
+        if (!movingFigure.updateState(false)) {
             grid.addFigure(movingFigure);
             movingFigure = MovingFigure.getRandomMovingFigure(gl, grid, rnd);
         }

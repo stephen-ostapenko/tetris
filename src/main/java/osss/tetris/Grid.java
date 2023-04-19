@@ -5,7 +5,6 @@ import com.jogamp.opengl.GL3;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static com.jogamp.opengl.GL.GL_TRIANGLES;
 import static com.jogamp.opengl.GL.GL_TRIANGLE_STRIP;
 
 class Grid {
@@ -25,6 +24,15 @@ class Grid {
     Cell[][] grid = new Cell[HEIGHT][WIDTH];
 
     public boolean checkCell(int row, int col) {
+        if (row < 0) {
+            return false;
+        }
+        if (row >= HEIGHT) {
+            return true;
+        }
+        if (col < 0 || col >= WIDTH) {
+            return false;
+        }
         return grid[row][col].free;
     }
 

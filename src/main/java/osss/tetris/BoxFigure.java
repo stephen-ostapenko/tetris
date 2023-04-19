@@ -1,9 +1,7 @@
 package osss.tetris;
 
 import com.jogamp.opengl.GL3;
-import javafx.util.Pair;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 class BoxFigure extends MovingFigure {

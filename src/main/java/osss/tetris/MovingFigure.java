@@ -14,7 +14,8 @@ abstract class MovingFigure {
     protected int[] rowOffset, colOffset, nxtRowOffset, nxtColOffset;
     protected float red, green, blue, alpha;
 
-    private long delay = 500;
+    private long delay = 100;
+    private long minDelay = 10;
     private long lastTime;
 
     private final int program;
@@ -25,7 +26,17 @@ abstract class MovingFigure {
     private final int colorLocation;
 
     public static MovingFigure getRandomMovingFigure(GL3 gl, Grid grid, Random rnd) {
-        return new BoxFigure(gl, grid, rnd);
+        int fig = rnd.nextInt(7);
+        switch (fig) {
+            case 0: return new BoxFigure(gl, grid, rnd);
+            case 1: return new TFigure(gl, grid, rnd);
+            case 2: return new GFigure1(gl, grid, rnd);
+            case 3: return new GFigure2(gl, grid, rnd);
+            case 4: return new StickFigure(gl, grid, rnd);
+            case 5: return new SFigure1(gl, grid, rnd);
+            case 6: return new SFigure2(gl, grid, rnd);
+            default: throw new IllegalStateException("Wrong figure type id");
+        }
     }
 
     MovingFigure(GL3 gl, Grid grid, int cellsCnt, Random rnd) {
@@ -106,9 +117,9 @@ abstract class MovingFigure {
         }
     }
 
-    public boolean updateState() {
+    public boolean updateState(boolean force) {
         long curTime = System.currentTimeMillis();
-        if (curTime - lastTime >= delay) {
+        if ((force && curTime - lastTime >= minDelay) || curTime - lastTime >= delay) {
             lastTime = curTime;
             return moveDown();
         }
@@ -119,7 +130,7 @@ abstract class MovingFigure {
         for (int i = 0; i < cellsCnt; i++) {
             int curRow = rowPos + nxtRowOffset[i], curCol = colPos + nxtColOffset[i];
 
-            if (curRow < 0 || curRow >= grid.HEIGHT) {
+            if (curRow < 0) {
                 return false;
             }
             if (curCol < 0 || curCol >= grid.WIDTH) {
@@ -134,13 +145,6 @@ abstract class MovingFigure {
         return true;
     }
 
-    protected void applyMove() {
-        for (int i = 0; i < cellsCnt; i++) {
-            rowOffset[i] = nxtRowOffset[i];
-            colOffset[i] = nxtColOffset[i];
-        }
-    }
-
     protected void rotate() {
         for (int i = 0; i < cellsCnt; i++) {
             nxtRowOffset[i] = colOffset[i];
@@ -151,7 +155,10 @@ abstract class MovingFigure {
             return;
         }
 
-        applyMove();
+        for (int i = 0; i < cellsCnt; i++) {
+            rowOffset[i] = nxtRowOffset[i];
+            colOffset[i] = nxtColOffset[i];
+        }
     }
 
     protected void moveLeft() {
@@ -164,7 +171,7 @@ abstract class MovingFigure {
             return;
         }
 
-        applyMove();
+        colPos--;
     }
 
     protected void moveRight() {
@@ -177,7 +184,7 @@ abstract class MovingFigure {
             return;
         }
 
-        applyMove();
+        colPos++;
     }
 
     protected boolean moveDown() {
@@ -190,7 +197,7 @@ abstract class MovingFigure {
             return false;
         }
 
-        applyMove();
+        rowPos--;
         return true;
     }
 }
