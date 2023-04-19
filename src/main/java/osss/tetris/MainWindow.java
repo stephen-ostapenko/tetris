@@ -10,15 +10,18 @@ import com.jogamp.opengl.util.Animator;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 
-public class MainWindow implements GLEventListener, KeyListener {
+class MainWindow implements GLEventListener, KeyListener {
     private GLWindow window;
     private Animator animator;
 
     private Grid grid;
+    private MovingFigure movingFigure;
+    private Random rnd;
 
     public void setup() {
         GLProfile glProfile = GLProfile.get(GLProfile.GL3);
@@ -73,7 +76,6 @@ public class MainWindow implements GLEventListener, KeyListener {
         GL3 gl = drawable.getGL().getGL3();
 
         gl.glViewport(600, 0, 400, 800);
-
         gl.glClearColor(0.8f, 0.8f, 1f, 0f);
 
         try {
@@ -81,6 +83,9 @@ public class MainWindow implements GLEventListener, KeyListener {
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
+
+        rnd = new Random();
+        movingFigure = MovingFigure.getRandomMovingFigure(gl, grid, rnd);
     }
 
     @Override
@@ -94,7 +99,13 @@ public class MainWindow implements GLEventListener, KeyListener {
 
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
+        if (!movingFigure.updateState()) {
+            grid.addFigure(movingFigure);
+            movingFigure = MovingFigure.getRandomMovingFigure(gl, grid, rnd);
+        }
+
         grid.draw(gl);
+        movingFigure.draw(gl);
     }
 
     @Override
@@ -107,5 +118,9 @@ public class MainWindow implements GLEventListener, KeyListener {
         int height_border = (height - g_height) / 2;
 
         drawable.getGL().getGL3().glViewport(width_border, height_border, g_width, g_height);
+    }
+
+    private void quit() {
+        new Thread(() -> window.destroy()).start();
     }
 }

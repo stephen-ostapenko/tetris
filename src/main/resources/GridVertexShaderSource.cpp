@@ -1,21 +1,24 @@
 #version 330 core
 
-const vec2 VERTICES[3] = vec2[3](
-    vec2(0.0, 1.0),
-    vec2(-sqrt(0.75), -0.5),
-    vec2( sqrt(0.75), -0.5)
-);
-
-const vec3 COLORS[3] = vec3[3](
-    vec3(1.0, 0.0, 0.0),
-    vec3(0.0, 1.0, 0.0),
-    vec3(0.0, 0.0, 1.0)
-);
-
-out vec3 color;
+uniform int field_width;
+uniform int field_height;
+uniform int row;
+uniform int col;
 
 void main() {
-    vec2 position = VERTICES[gl_VertexID];
-    gl_Position = vec4(position, 0.0, 1.0);
-    color = COLORS[gl_VertexID];
+    float cell_width = 2.0 / field_width;
+    float cell_height = 2.0 / field_height;
+
+    if (gl_VertexID == 0) {
+        gl_Position = vec4(col * cell_width, row * cell_height, 0.0, 1.0);
+    } else if (gl_VertexID == 1) {
+        gl_Position = vec4(col * cell_width, (row + 1) * cell_height, 0.0, 1.0);
+    } else if (gl_VertexID == 2) {
+        gl_Position = vec4((col + 1) * cell_width, row * cell_height, 0.0, 1.0);
+    } else if (gl_VertexID == 3) {
+        gl_Position = vec4((col + 1) * cell_width, (row + 1) * cell_height, 0.0, 1.0);
+    } else {
+        // error
+    }
+    gl_Position -= vec4(1.0, 1.0, 0.0, 0.0);
 }
