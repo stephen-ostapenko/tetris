@@ -9,6 +9,10 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.Animator;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+
+import static java.lang.Math.min;
+import static java.lang.Math.round;
 
 public class MainWindow implements GLEventListener, KeyListener {
     private GLWindow window;
@@ -28,7 +32,7 @@ public class MainWindow implements GLEventListener, KeyListener {
         window.setPointerVisible(true);
         window.confinePointer(false);
         window.setTitle("tetris");
-        window.setSize(400, 400);
+        window.setSize(1600, 800);
 
         window.setVisible(true);
 
@@ -68,6 +72,8 @@ public class MainWindow implements GLEventListener, KeyListener {
     public void init(GLAutoDrawable drawable) {
         GL3 gl = drawable.getGL().getGL3();
 
+        gl.glViewport(600, 0, 400, 800);
+
         gl.glClearColor(0.8f, 0.8f, 1f, 0f);
 
         try {
@@ -93,6 +99,13 @@ public class MainWindow implements GLEventListener, KeyListener {
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        drawable.getGL().getGL3().glViewport(x, y, width, height);
+        float aspect_ratio = 0.5f;
+        int g_width = min(width, round(height * aspect_ratio));
+        int g_height = min(height, round(width / aspect_ratio));
+
+        int width_border = (width - g_width) / 2;
+        int height_border = (height - g_height) / 2;
+
+        drawable.getGL().getGL3().glViewport(width_border, height_border, g_width, g_height);
     }
 }
