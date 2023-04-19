@@ -14,9 +14,10 @@ abstract class MovingFigure {
     protected int[] rowOffset, colOffset, nxtRowOffset, nxtColOffset;
     protected float red, green, blue, alpha;
 
-    private long delay = 100;
-    private long minDelay = 10;
+    private long delay = 500;
+    private long minDelay = 0;
     private long lastTime;
+    private boolean updateFailedAtLeastOnce = false;
 
     private final int program;
 
@@ -119,9 +120,15 @@ abstract class MovingFigure {
 
     public boolean updateState(boolean force) {
         long curTime = System.currentTimeMillis();
-        if ((force && curTime - lastTime >= minDelay) || curTime - lastTime >= delay) {
+        if ((force && curTime - lastTime >= minDelay) || curTime - lastTime >= delay || updateFailedAtLeastOnce) {
             lastTime = curTime;
-            return moveDown();
+
+            if (moveDown()) {
+                return true;
+            } else {
+                updateFailedAtLeastOnce = true;
+                return false;
+            }
         }
         return true;
     }

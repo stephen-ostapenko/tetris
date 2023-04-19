@@ -71,6 +71,9 @@ class MainWindow implements GLEventListener, KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             movingFigure.rotate();
         }
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            movingFigure.updateState(true);
+        }
     }
 
     @Override
