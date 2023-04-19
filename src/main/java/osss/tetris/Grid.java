@@ -49,8 +49,42 @@ class Grid {
             }
         }
 
-        String vertexShaderSource = Util.readFile("./src/main/resources/GridVertexShaderSource.cpp");
-        String fragmentShaderSource = Util.readFile("./src/main/resources/GridFragmentShaderSource.cpp");
+        String vertexShaderSource = "" +
+                "#version 330 core\n" +
+                "\n" +
+                "uniform int field_width;\n" +
+                "uniform int field_height;\n" +
+                "uniform int row;\n" +
+                "uniform int col;\n" +
+                "\n" +
+                "void main() {\n" +
+                "    float cell_width = 2.0 / field_width;\n" +
+                "    float cell_height = 2.0 / field_height;\n" +
+                "\n" +
+                "    if (gl_VertexID == 0) {\n" +
+                "        gl_Position = vec4(col * cell_width, row * cell_height, 0.0, 1.0);\n" +
+                "    } else if (gl_VertexID == 1) {\n" +
+                "        gl_Position = vec4(col * cell_width, (row + 1) * cell_height, 0.0, 1.0);\n" +
+                "    } else if (gl_VertexID == 2) {\n" +
+                "        gl_Position = vec4((col + 1) * cell_width, row * cell_height, 0.0, 1.0);\n" +
+                "    } else if (gl_VertexID == 3) {\n" +
+                "        gl_Position = vec4((col + 1) * cell_width, (row + 1) * cell_height, 0.0, 1.0);\n" +
+                "    } else {\n" +
+                "        // error\n" +
+                "    }\n" +
+                "    gl_Position -= vec4(1.0, 1.0, 0.0, 0.0);\n" +
+                "}";
+
+        String fragmentShaderSource = "" +
+                "#version 330 core\n" +
+                "\n" +
+                "uniform vec4 color;\n" +
+                "\n" +
+                "layout (location = 0) out vec4 out_color;\n" +
+                "\n" +
+                "void main() {\n" +
+                "    out_color = color;\n" +
+                "}";
 
         int vertexShader = Util.createShader(gl, GL3.GL_VERTEX_SHADER, vertexShaderSource);
         int fragmentShader = Util.createShader(gl, GL3.GL_FRAGMENT_SHADER, fragmentShaderSource);
@@ -89,10 +123,17 @@ class Grid {
         }
     }
 
-    public void addFigure(MovingFigure figure) {
+    public boolean addFigure(MovingFigure figure) {
         for (int i = 0; i < figure.cellsCnt; i++) {
             int curRow = figure.rowPos + figure.rowOffset[i];
             int curCol = figure.colPos + figure.colOffset[i];
+
+            if (curRow < 0 || curRow >= HEIGHT) {
+                return false;
+            }
+            if (curCol < 0 || curCol >= WIDTH) {
+                return false;
+            }
 
             grid[curRow][curCol].free = false;
             grid[curRow][curCol].red = figure.red;
@@ -100,5 +141,7 @@ class Grid {
             grid[curRow][curCol].blue = figure.blue;
             grid[curRow][curCol].alpha = figure.alpha;
         }
+
+        return true;
     }
 }

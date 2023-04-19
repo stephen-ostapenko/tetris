@@ -22,6 +22,8 @@ class MainWindow implements GLEventListener, KeyListener {
     private MovingFigure movingFigure;
     private Random rnd;
 
+    private boolean isRunning = false;
+
     public void setup() {
         GLProfile glProfile = GLProfile.get(GLProfile.GL3);
         GLCapabilities glCapabilities = new GLCapabilities(glProfile);
@@ -62,16 +64,16 @@ class MainWindow implements GLEventListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        if (isRunning && e.getKeyCode() == KeyEvent.VK_LEFT) {
             movingFigure.moveLeft();
         }
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        if (isRunning && e.getKeyCode() == KeyEvent.VK_RIGHT) {
             movingFigure.moveRight();
         }
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
+        if (isRunning && e.getKeyCode() == KeyEvent.VK_UP) {
             movingFigure.rotate();
         }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+        if (isRunning && e.getKeyCode() == KeyEvent.VK_DOWN) {
             movingFigure.updateState(true);
         }
     }
@@ -96,6 +98,8 @@ class MainWindow implements GLEventListener, KeyListener {
 
         rnd = new Random();
         movingFigure = MovingFigure.getRandomMovingFigure(gl, grid, rnd);
+
+        isRunning = true;
     }
 
     @Override
@@ -109,8 +113,12 @@ class MainWindow implements GLEventListener, KeyListener {
 
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
-        if (!movingFigure.updateState(false)) {
-            grid.addFigure(movingFigure);
+        if (isRunning && !movingFigure.updateState(false)) {
+            if (!grid.addFigure(movingFigure)) {
+                isRunning = false;
+                return;
+            }
+
             movingFigure = MovingFigure.getRandomMovingFigure(gl, grid, rnd);
         }
 
