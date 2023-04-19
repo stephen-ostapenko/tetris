@@ -8,7 +8,6 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.Animator;
 
-import java.io.IOException;
 import java.util.Random;
 
 import static java.lang.Math.min;
@@ -90,13 +89,8 @@ class MainWindow implements GLEventListener, KeyListener {
         gl.glViewport(600, 0, 400, 800);
         gl.glClearColor(0.8f, 0.8f, 1f, 0f);
 
-        try {
-            grid = new Grid(gl);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-
         rnd = new Random();
+        grid = new Grid(gl);
         movingFigure = MovingFigure.getRandomMovingFigure(gl, grid, rnd);
 
         isRunning = true;

@@ -2,7 +2,7 @@ package osss.tetris;
 
 import com.jogamp.opengl.GL3;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.jogamp.opengl.GL.GL_TRIANGLE_STRIP;
@@ -21,7 +21,17 @@ class Grid {
     public final int WIDTH = 10;
     public final int HEIGHT = 20;
 
-    Cell[][] grid = new Cell[HEIGHT][WIDTH];
+    ArrayList<Cell[]> grid = new ArrayList<>();
+
+    private void fillCells() {
+        while (grid.size() < HEIGHT) {
+            Cell[] row = new Cell[WIDTH];
+            for (int i = 0; i < WIDTH; i++) {
+                row[i] = new Cell(true, 0, 0, 0, 1);
+            }
+            grid.add(row);
+        }
+    }
 
     public boolean checkCell(int row, int col) {
         if (row < 0) {
@@ -33,7 +43,7 @@ class Grid {
         if (col < 0 || col >= WIDTH) {
             return false;
         }
-        return grid[row][col].free;
+        return grid.get(row)[col].free;
     }
 
     private final int program;
@@ -42,12 +52,8 @@ class Grid {
     private final int fieldWidthLocation, fieldHeightLocation, rowLocation, colLocation;
     private final int colorLocation;
 
-    public Grid(GL3 gl) throws IOException {
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
-                grid[i][j] = new Cell(true, 0, 0, 0, 1);
-            }
-        }
+    public Grid(GL3 gl) {
+        fillCells();
 
         String vertexShaderSource = "" +
                 "#version 330 core\n" +
@@ -110,13 +116,13 @@ class Grid {
 
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {
-                if (grid[i][j].free) {
+                if (grid.get(i)[j].free) {
                     continue;
                 }
 
                 gl.glUniform1i(rowLocation, i);
                 gl.glUniform1i(colLocation, j);
-                gl.glUniform4f(colorLocation, grid[i][j].red, grid[i][j].green, grid[i][j].blue, grid[i][j].alpha);
+                gl.glUniform4f(colorLocation, grid.get(i)[j].red, grid.get(i)[j].green, grid.get(i)[j].blue, grid.get(i)[j].alpha);
 
                 gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
             }
@@ -135,13 +141,20 @@ class Grid {
                 return false;
             }
 
-            grid[curRow][curCol].free = false;
-            grid[curRow][curCol].red = figure.red;
-            grid[curRow][curCol].green = figure.green;
-            grid[curRow][curCol].blue = figure.blue;
-            grid[curRow][curCol].alpha = figure.alpha;
+            grid.get(curRow)[curCol].free = false;
+            grid.get(curRow)[curCol].red = figure.red;
+            grid.get(curRow)[curCol].green = figure.green;
+            grid.get(curRow)[curCol].blue = figure.blue;
+            grid.get(curRow)[curCol].alpha = figure.alpha;
         }
 
+        eraseAllFilledRows();
+
         return true;
+    }
+
+    private void eraseAllFilledRows() {
+        grid.removeIf(cArr -> Arrays.stream(cArr).noneMatch(it -> it.free));
+        fillCells();
     }
 }
