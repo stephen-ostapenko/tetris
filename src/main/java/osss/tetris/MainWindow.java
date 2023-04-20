@@ -24,6 +24,7 @@ class MainWindow implements GLEventListener, KeyListener {
 
     // flag that game is running
     private boolean isRunning = false;
+    private final String windowTitle = "tetris";
 
     public void setup() {
         GLProfile glProfile = GLProfile.get(GLProfile.GL3);
@@ -36,7 +37,7 @@ class MainWindow implements GLEventListener, KeyListener {
         window.setFullscreen(false);
         window.setPointerVisible(true);
         window.confinePointer(false);
-        window.setTitle("tetris");
+        window.setTitle(windowTitle);
         window.setSize(1600, 800);
 
         window.setVisible(true);
@@ -98,6 +99,7 @@ class MainWindow implements GLEventListener, KeyListener {
         movingFigure = MovingFigure.getRandomMovingFigure(gl, grid, rnd);
 
         isRunning = true;
+        window.setTitle(windowTitle + " [running]");
     }
 
     @Override
@@ -115,6 +117,7 @@ class MainWindow implements GLEventListener, KeyListener {
         if (isRunning && !movingFigure.updateState(false)) {
             if (!grid.addFigure(movingFigure)) {
                 isRunning = false;
+                window.setTitle(windowTitle + " [game over]");
                 return;
             }
 
