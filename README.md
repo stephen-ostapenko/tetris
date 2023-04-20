@@ -1,6 +1,6 @@
 # Tetris
 
-*Степан Остапенко, тестовое задание для проекта **Multiplatform code editor***
+*Степан Остапенко, тестовое задание для проекта **Multiplatform Code Editor***
 
 ---
 
@@ -8,7 +8,7 @@
 
 Тетрис для десктопных платформ.
 
-Проект реализован на чистом OpenGL в Java (с помощью библиотеки [JOGL](https://ru.wikipedia.org/wiki/Java_OpenGL)).
+Проект реализован на чистом OpenGL 3.3 в Java (с помощью библиотеки [JOGL](https://ru.wikipedia.org/wiki/Java_OpenGL)).
 
 В игре есть возможность
 * двигать фигуры влево/вправо при нажатии на стрелки влево/вправо,
@@ -47,4 +47,4 @@ SuduIDE я не использовал, т. к. не нашел инструкц
 
 ### Еще
 
-Если интересно, вот мой [проект](https://github.com/stephen-ostapenko/graphics-practice-and-hw/tree/master/proj) с университетского курса по компьютерной графике. Написан на чистом OpenGL в C++.
+Если интересно, вот мой [проект](https://github.com/stephen-ostapenko/graphics-practice-and-hw/tree/master/proj) с университетского курса по компьютерной графике. Написан на чистом OpenGL 3.3 в C++.
