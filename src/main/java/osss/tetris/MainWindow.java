@@ -19,6 +19,7 @@ class MainWindow implements GLEventListener, KeyListener {
 
     private Grid grid;
     private MovingFigure movingFigure;
+    private Background background;
     private Random rnd;
 
     private boolean isRunning = false;
@@ -90,6 +91,7 @@ class MainWindow implements GLEventListener, KeyListener {
         gl.glClearColor(0.8f, 0.8f, 1f, 0f);
 
         rnd = new Random();
+        background = new Background(gl);
         grid = new Grid(gl);
         movingFigure = MovingFigure.getRandomMovingFigure(gl, grid, rnd);
 
@@ -116,6 +118,7 @@ class MainWindow implements GLEventListener, KeyListener {
             movingFigure = MovingFigure.getRandomMovingFigure(gl, grid, rnd);
         }
 
+        background.draw(gl);
         grid.draw(gl);
         movingFigure.draw(gl);
     }

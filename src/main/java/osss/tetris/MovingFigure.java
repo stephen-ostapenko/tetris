@@ -45,7 +45,9 @@ abstract class MovingFigure {
         this.cellsCnt = cellsCnt;
         rowPos = grid.HEIGHT; colPos = grid.WIDTH / 2 - 1;
         nxtRowOffset = new int[this.cellsCnt]; nxtColOffset = new int[this.cellsCnt];
-        red = rnd.nextFloat(); green = rnd.nextFloat(); blue = rnd.nextFloat();
+        red = rnd.nextFloat() * 0.8f + 0.2f;
+        green = rnd.nextFloat() * 0.8f + 0.2f;
+        blue = rnd.nextFloat() * 0.8f + 0.2f;
         alpha = 1f;
 
         String vertexShaderSource = "" +
