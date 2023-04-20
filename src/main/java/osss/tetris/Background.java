@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import static com.jogamp.opengl.GL.GL_TRIANGLE_STRIP;
 
+// class for drawing solid-color background
 public class Background {
     private final int program;
 

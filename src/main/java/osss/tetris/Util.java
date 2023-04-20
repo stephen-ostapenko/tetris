@@ -15,6 +15,7 @@ import static com.jogamp.opengl.GL.GL_TRUE;
 import static com.jogamp.opengl.GL2ES2.*;
 import static com.jogamp.opengl.GL3.GL_GEOMETRY_SHADER;
 
+// some utils for OpenGL
 public class Util {
     static String readFile(String path) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));

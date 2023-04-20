@@ -4,6 +4,13 @@ import com.jogamp.opengl.GL3;
 
 import java.util.Random;
 
+/*
+shape:
+....
+.##.
+.##.
+....
+ */
 class BoxFigure extends MovingFigure {
     BoxFigure(GL3 gl, Grid grid, Random rnd) {
         super(gl, grid, 4, rnd);

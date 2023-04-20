@@ -8,16 +8,28 @@ import java.util.Random;
 import static com.jogamp.opengl.GL.GL_TRIANGLE_STRIP;
 
 abstract class MovingFigure {
+    // link to grid
     protected Grid grid;
+    // number of cells in figure (4 in our case)
     protected int cellsCnt;
+    // position of main cell of the figure
     protected int rowPos, colPos;
-    protected int[] rowOffset, colOffset, nxtRowOffset, nxtColOffset;
+    // offsets between main cell and all other cells
+    protected int[] rowOffset, colOffset;
+    // needed for checking if transformation or move is available
+    protected int[] nxtRowOffset, nxtColOffset;
+    // color of the figure
     protected float red, green, blue, alpha;
 
+    // delays between downward moves
     private long delay = 500;
     private long minDelay = 0;
+    // last time figure moved downward
     private long lastTime;
-    private boolean updateFailedAtLeastOnce = false;
+    // flag that the figure is already landed
+    private boolean figureLanded = false;
+
+    // OpenGL stuff
 
     private final int program;
 
@@ -26,6 +38,7 @@ abstract class MovingFigure {
     private final int fieldWidthLocation, fieldHeightLocation, rowLocation, colLocation;
     private final int colorLocation;
 
+    // choose next figure randomly
     public static MovingFigure getRandomMovingFigure(GL3 gl, Grid grid, Random rnd) {
         int fig = rnd.nextInt(7);
         switch (fig) {
@@ -41,6 +54,7 @@ abstract class MovingFigure {
     }
 
     MovingFigure(GL3 gl, Grid grid, int cellsCnt, Random rnd) {
+        // initializing figure position and color
         this.grid = grid;
         this.cellsCnt = cellsCnt;
         rowPos = grid.HEIGHT; colPos = grid.WIDTH / 2 - 1;
@@ -103,6 +117,7 @@ abstract class MovingFigure {
         lastTime = System.currentTimeMillis();
     }
 
+    // draw figure
     public void draw(GL3 gl) {
         gl.glUseProgram(program);
 
@@ -120,21 +135,24 @@ abstract class MovingFigure {
         }
     }
 
+    // move the figure down if it's possible
+    // or report that it's landed
     public boolean updateState(boolean force) {
         long curTime = System.currentTimeMillis();
-        if ((force && curTime - lastTime >= minDelay) || curTime - lastTime >= delay || updateFailedAtLeastOnce) {
+        if ((force && curTime - lastTime >= minDelay) || curTime - lastTime >= delay || figureLanded) {
             lastTime = curTime;
 
             if (moveDown()) {
                 return true;
             } else {
-                updateFailedAtLeastOnce = true;
+                figureLanded = true;
                 return false;
             }
         }
         return true;
     }
 
+    // check thar potential figure position is valid
     protected boolean check() {
         for (int i = 0; i < cellsCnt; i++) {
             int curRow = rowPos + nxtRowOffset[i], curCol = colPos + nxtColOffset[i];
@@ -154,6 +172,7 @@ abstract class MovingFigure {
         return true;
     }
 
+    // counter-clockwise rotation of the figure
     protected void rotate() {
         for (int i = 0; i < cellsCnt; i++) {
             nxtRowOffset[i] = colOffset[i];
@@ -196,6 +215,7 @@ abstract class MovingFigure {
         colPos++;
     }
 
+    // returns false if the figure can't move down
     protected boolean moveDown() {
         for (int i = 0; i < cellsCnt; i++) {
             nxtRowOffset[i] = rowOffset[i] - 1;

@@ -7,7 +7,9 @@ import java.util.Arrays;
 
 import static com.jogamp.opengl.GL.GL_TRIANGLE_STRIP;
 
+// class for in-game grid field
 class Grid {
+    // class for one cell
     private static class Cell {
         boolean free;
         float red, green, blue, alpha;
@@ -18,11 +20,13 @@ class Grid {
         }
     }
 
+    // width and height in cells
     public final int WIDTH = 10;
     public final int HEIGHT = 20;
 
     ArrayList<Cell[]> grid = new ArrayList<>();
 
+    // add free cells on top
     private void fillCells() {
         while (grid.size() < HEIGHT) {
             Cell[] row = new Cell[WIDTH];
@@ -33,6 +37,7 @@ class Grid {
         }
     }
 
+    // check that cell on grid is free
     public boolean checkCell(int row, int col) {
         if (row < 0) {
             return false;
@@ -46,9 +51,12 @@ class Grid {
         return grid.get(row)[col].free;
     }
 
+    // OpenGL stuff
+
     private final int program;
 
     private final int vao;
+
     private final int fieldWidthLocation, fieldHeightLocation, rowLocation, colLocation;
     private final int colorLocation;
 
@@ -106,6 +114,7 @@ class Grid {
         vao = Util.genVAO(gl);
     }
 
+    // drawing all cells
     public void draw(GL3 gl) {
         gl.glUseProgram(program);
 
@@ -129,6 +138,11 @@ class Grid {
         }
     }
 
+    // when figure is landed it becomes frozen
+    // since then it has to be added into field
+    //
+    // function returns false if figure doesn't fit into game field
+    // otherwise returns true
     public boolean addFigure(MovingFigure figure) {
         for (int i = 0; i < figure.cellsCnt; i++) {
             int curRow = figure.rowPos + figure.rowOffset[i];
@@ -153,6 +167,7 @@ class Grid {
         return true;
     }
 
+    // erasing all full rows
     private void eraseAllFilledRows() {
         grid.removeIf(cArr -> Arrays.stream(cArr).noneMatch(it -> it.free));
         fillCells();

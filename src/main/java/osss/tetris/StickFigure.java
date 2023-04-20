@@ -4,6 +4,12 @@ import com.jogamp.opengl.GL3;
 
 import java.util.Random;
 
+/*
+shape:
+......
+.####.
+......
+ */
 class StickFigure extends MovingFigure {
     StickFigure(GL3 gl, Grid grid, Random rnd) {
         super(gl, grid, 4, rnd);

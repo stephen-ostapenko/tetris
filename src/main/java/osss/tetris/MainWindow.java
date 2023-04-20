@@ -22,6 +22,7 @@ class MainWindow implements GLEventListener, KeyListener {
     private Background background;
     private Random rnd;
 
+    // flag that game is running
     private boolean isRunning = false;
 
     public void setup() {
@@ -74,6 +75,7 @@ class MainWindow implements GLEventListener, KeyListener {
             movingFigure.rotate();
         }
         if (isRunning && e.getKeyCode() == KeyEvent.VK_DOWN) {
+            // trying to push the figure down
             movingFigure.updateState(true);
         }
     }
@@ -103,6 +105,7 @@ class MainWindow implements GLEventListener, KeyListener {
 
     }
 
+    // main drawing function
     @Override
     public void display(GLAutoDrawable drawable) {
         GL3 gl = drawable.getGL().getGL3();
@@ -115,6 +118,7 @@ class MainWindow implements GLEventListener, KeyListener {
                 return;
             }
 
+            // getting the next figure if the game is still in process
             movingFigure = MovingFigure.getRandomMovingFigure(gl, grid, rnd);
         }
 
